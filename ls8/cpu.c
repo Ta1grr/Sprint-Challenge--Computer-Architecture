@@ -66,7 +66,15 @@ void alu(struct cpu *cpu, enum alu_op op, unsigned char regA, unsigned char regB
       cpu->registers[regA] = (cpu->registers[regA] + cpu->registers[regB]);
       break;
     case ALU_CMP:
-
+      if(cpu->registers[regA] > cpu->registers[regB]){
+        cpu->FL = 0b00000010;
+      }
+      else if(cpu->registers[regA] < cpu->registers[regB]){
+        cpu->FL = 0b00000100;
+      }
+      else{
+        cpu->FL = 0b00000001;
+      }
       break;
     default:
       break;
@@ -94,7 +102,6 @@ void cpu_run(struct cpu *cpu)
     operandB = cpu_ram_read(cpu, cpu->PC + 2); // MDR_B
     // adding to program counter
     add_to_PC = (IR >> 6) + 1;
-    // FL Register
 
 
       switch(IR) {
@@ -120,7 +127,7 @@ void cpu_run(struct cpu *cpu)
           cpu->PC = cpu->registers[operandA]; // Setting PC to the value in the given register
           break;
         case JEQ:
-          if(cpu->FL == 0b00000001) {
+          if(cpu->FL == 0b00000001 /* 0b00000LGE */) {
           cpu->PC = cpu->registers[operandA];
           }
           break;
