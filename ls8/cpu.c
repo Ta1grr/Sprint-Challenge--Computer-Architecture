@@ -124,16 +124,19 @@ void cpu_run(struct cpu *cpu)
           alu(cpu, ALU_CMP, operandA, operandB);
           break;
         case JMP:
-          cpu->PC = cpu->registers[operandA]; // Setting PC to the value in the given register
+          cpu->PC = cpu->registers[operandA];
+          cpu->PC -= 2;
           break;
         case JEQ:
-          if(cpu->FL == 0b00000001 /* 0b00000LGE */) {
+          if(cpu->FL == 0b00000001) {
           cpu->PC = cpu->registers[operandA];
+          cpu->PC -= 2;
           }
           break;
         case JNE:
-          if(cpu->FL == 0b00000000) {
+          if(cpu->FL == 0b00000100 || cpu->FL == 0b00000010 || cpu->FL == 0b00000000) {
           cpu->PC = cpu->registers[operandA];
+          cpu->PC -= 2;
           }
           break;
         case PUSH:
