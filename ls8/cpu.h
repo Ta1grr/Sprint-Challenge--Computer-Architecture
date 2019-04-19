@@ -6,6 +6,8 @@ struct cpu {
   // TODO
   // PC
   unsigned char PC; // keeps track where the program is executing
+  // FL
+  unsigned char FL; // FL register
   // registers (array)
   unsigned char registers[8]; // where the operands live
   // ram (array)

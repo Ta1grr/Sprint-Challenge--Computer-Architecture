@@ -65,6 +65,9 @@ void alu(struct cpu *cpu, enum alu_op op, unsigned char regA, unsigned char regB
       // TODO
       cpu->registers[regA] = (cpu->registers[regA] + cpu->registers[regB]);
       break;
+    case ALU_CMP:
+
+      break;
     default:
       break;
 
@@ -86,11 +89,13 @@ void cpu_run(struct cpu *cpu)
 
     IR = cpu_ram_read(cpu, cpu->PC);
     // OperandA - PC + 1
-    operandA = cpu_ram_read(cpu, cpu->PC + 1);
+    operandA = cpu_ram_read(cpu, cpu->PC + 1); // MDR_A
     // OperandB - PC + 2
-    operandB = cpu_ram_read(cpu, cpu->PC + 2);
+    operandB = cpu_ram_read(cpu, cpu->PC + 2); // MDR_B
     // adding to program counter
     add_to_PC = (IR >> 6) + 1;
+    // FL Register
+
 
       switch(IR) {
         case LDI:
@@ -107,6 +112,22 @@ void cpu_run(struct cpu *cpu)
           break;
         case ADD:
           alu(cpu, ALU_ADD, operandA, operandB);
+          break;
+        case CMP:
+          alu(cpu, ALU_CMP, operandA, operandB);
+          break;
+        case JMP:
+          cpu->PC = cpu->registers[operandA]; // Setting PC to the value in the given register
+          break;
+        case JEQ:
+          if(cpu->FL == 0b00000001) {
+          cpu->PC = cpu->registers[operandA];
+          }
+          break;
+        case JNE:
+          if(cpu->FL == 0b00000000) {
+          cpu->PC = cpu->registers[operandA];
+          }
           break;
         case PUSH:
           cpu->registers[7]--;
@@ -150,6 +171,7 @@ void cpu_init(struct cpu *cpu)
 {
   // TODO: Initialize the PC and other special registers
   cpu->PC = 0;
+  cpu->FL = 0; // 0 = 0b00000000 or 0x00
   memset(cpu->ram, 0, sizeof(cpu->ram)); // array
   memset(cpu->registers, 0, sizeof(cpu->registers)); // array
   cpu->registers[7] = 0xF4;
