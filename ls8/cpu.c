@@ -117,11 +117,8 @@ void cpu_run(struct cpu *cpu)
           cpu->registers[7]++;
           break;
         case CALL:
-        // Decrementing down from the stack
           cpu->registers[7]--;
-        // Storing the next address PC in the set of instructions to our stack.
-          cpu->ram[cpu->registers[7]] = cpu->PC += add_to_PC;  // 8 
-        // Setting the PC to the address according to the register after call was made.
+          cpu->ram[cpu->registers[7]] = cpu->PC += add_to_PC;
           cpu->PC = cpu->registers[operandA];
           cpu->PC -= 2; // To offset the add_to_PC;
           break;
